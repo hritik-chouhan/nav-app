@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:test_restart/search.dart';
 
 void main() {
   runApp(const MyApp());
@@ -105,7 +106,15 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
-        onPressed: _incrementCounter,
+        onPressed: (){
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchPage(iscurrent: true),
+              ),
+            );
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
