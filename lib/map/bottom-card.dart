@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:test_restart/kuksa/class-provider.dart';
-import 'package:test_restart/kuksa/class.dart';
-import 'package:test_restart/provider.dart';
+import 'package:flutter_navigation/kuksa/class-provider.dart';
+import 'package:flutter_navigation/kuksa/class.dart';
+import 'package:flutter_navigation/provider.dart';
 
 Widget bottomDetailCard(
     BuildContext context, ref,String distance, String dropOffTime,String CurrAdd) {

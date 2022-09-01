@@ -1,4 +1,4 @@
-package com.example.test_restart
+package com.example.flutter_navigation
 
 import io.flutter.embedding.android.FlutterActivity
 

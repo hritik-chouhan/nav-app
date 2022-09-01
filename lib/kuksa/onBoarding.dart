@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:test_restart/kuksa/vehicle-methods.dart';
+import 'package:flutter_navigation/kuksa/vehicle-methods.dart';
 
 import '../main.dart';
 import 'config.dart';

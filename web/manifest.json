@@ -1,6 +1,6 @@
 {
-    "name": "test_restart",
-    "short_name": "test_restart",
+    "name": "flutter_navigation",
+    "short_name": "flutter_navigation",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

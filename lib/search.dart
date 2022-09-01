@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-import 'package:test_restart/kuksa/class-provider.dart';
-import 'package:test_restart/provider.dart';
+import 'package:flutter_navigation/kuksa/class-provider.dart';
+import 'package:flutter_navigation/provider.dart';
 
 import 'mapbox.dart';
 

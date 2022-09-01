@@ -3,8 +3,8 @@ import 'dart:io';
 
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:test_restart/kuksa/config.dart';
-import 'package:test_restart/kuksa/paths.dart';
+import 'package:flutter_navigation/kuksa/config.dart';
+import 'package:flutter_navigation/kuksa/paths.dart';
 
 import 'class-provider.dart';
 
