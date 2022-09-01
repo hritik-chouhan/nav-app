@@ -11,9 +11,12 @@ Widget bottomDetailCard(
 
   return Container(
     alignment: Alignment.bottomLeft,
+
     child: SizedBox(
+
       width: MediaQuery.of(context).size.width,
       child: Card(
+        // color: Colors.white54,
         clipBehavior: Clip.antiAlias,
         child: Padding(
           padding: const EdgeInsets.all(15),
@@ -31,13 +34,13 @@ Widget bottomDetailCard(
                   child: ListTile(
                     tileColor: Colors.grey[200],
                     leading: const Image(
-                        image: AssetImage('assets/img_1.png'),
+                        image: AssetImage('assets/car2.png'),
                         height: 50,
                         width: 50),
                     title: const Text('Happy Journey',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
-                    subtitle: Text('$distance km     $dropOffTime'),
+                    subtitle: Text('$distance km     $dropOffTime',style: TextStyle(color: Colors.black),),
                     // trailing: const Text('\$384.22',
                     //     style: TextStyle(
                     //         fontWeight: FontWeight.bold, fontSize: 18)),

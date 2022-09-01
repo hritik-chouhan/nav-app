@@ -26,6 +26,27 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
   late MapController mapController;
   List<LatLng> polyLine = [];
 
+  String ConvertToTime(num duration){
+    int hour = (duration/3600).toInt();
+    int min = (duration%3600).toInt() ;
+    String mini = '';
+    if(min.toString().length > 2){
+      mini = min.toString().substring(0,2);
+
+    }
+    String Hour = hour.toString();
+    if(mini.length == 0){
+      String time = "$Hour hr 0 min";
+      return time;
+
+    }
+    String time = "$Hour hr $mini min";
+
+    return time;
+  }
+
+
+
 
   @override
   void initState() {
@@ -38,31 +59,46 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
         VehicleSignal vehicleSignal = ref.read(vehicleSignalProvider);
 
         LatLng current = LatLng(vehicleSignal.currentLatitude, vehicleSignal.currentLongitude);
-        mapController.move(current, 16);
+        mapController.move(current, 18);
         LatLng destination = LatLng(vehicleSignal.destinationLatitude,vehicleSignal.destinationLongitude);
-        print(' current $current');
-        print(' destination $destination');
+        // print(' current $current');
+        // print(' destination $destination');
         Map RouteResponse = await getDirectionsAPIResponse(current,destination);
-        print(RouteResponse['geometry']['coordinates'].runtimeType);
+        // print(RouteResponse['geometry']['coordinates'].runtimeType);
 
-        List RouteCoordinates = RouteResponse['geometry']['coordinates'];
-        List<LatLng> currpolyline =[];
-        for(int i =0; i<RouteCoordinates.length ;i++){
-          currpolyline.add(LatLng(RouteCoordinates[i][1],RouteCoordinates[i][0]));
+        if(RouteResponse.isNotEmpty){
+
+          List RouteCoordinates = RouteResponse['geometry']['coordinates'];
+          // print('check');
+          // print(RouteResponse['steps']['maneuver']['instruction']);
+          Map steps = RouteResponse['legs']['steps'][0];
+          // print(steps['maneuver']['instruction']);
+
+          // print(steps);
+          // print(steps['maneuver']);
+          ref.read(Infoprovider.notifier).update(Duration: RouteResponse['duration'],
+              Distance: RouteResponse['distance'], instruction: steps['maneuver']['instruction']);
+          List<LatLng> currpolyline =[];
+          for(int i =0; i<RouteCoordinates.length ;i++){
+            currpolyline.add(LatLng(RouteCoordinates[i][1],RouteCoordinates[i][0]));
+
+          }
+          ref.read(polylineprovider.notifier).update(currpolyline);
+          print('timerpolyline ${polyLine[0]},${polyLine[1]}');
+          double rotationDegree = 0;
+          int n = currpolyline.length;
+          if (currpolyline.isNotEmpty && n > 1) {
+            rotationDegree = calcAngle(
+                currpolyline[0], currpolyline[1]);
+
+            rotationDegree = (rotationDegree.isNaN) ? 0 : rotationDegree;
+          }
+          // print("Rotation:$rotationDegree");
+          mapController.rotate(-1 * rotationDegree);
+
 
         }
-        ref.read(polylineprovider.notifier).update(currpolyline);
-        print('timerpolyline ${polyLine[0]},${polyLine[1]}');
-        double rotationDegree = 0;
-        int n = currpolyline.length;
-        if (currpolyline.isNotEmpty && n > 1) {
-          rotationDegree = calcAngle(
-              currpolyline[0], currpolyline[1]);
 
-          rotationDegree = (rotationDegree.isNaN) ? 0 : rotationDegree;
-        }
-        // print("Rotation:$rotationDegree");
-        mapController.rotate(-1 * rotationDegree);
 
       });
 
@@ -103,92 +139,159 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
     VehicleSignal vehicleSignal = ref.watch(vehicleSignalProvider);
     LatLng currPos = LatLng(vehicleSignal.currentLatitude, vehicleSignal.currentLongitude);
     polyLine = ref.watch(polylineprovider);
+    info routeinfo = ref.watch(Infoprovider);
 
-    return FlutterMap(
-      mapController: mapController,
-      options: MapOptions(
-        // rotation: -1 * mapRotation,
-        center: currPos,
-        minZoom: 1,
-        zoom: 12,
-        // zoom: mapZoom ?? 18,
-        maxZoom: 30.0,
-        keepAlive: true,
-      ),
-      layers: [
-        // TileLayerOptions(
-        //   maxZoom: 22,
-        //   maxNativeZoom: 18,
-        //   subdomains: ["a", "b", "c"],
-        //   urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        //   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-        // ),
-        TileLayerOptions(
-          urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7hxzrrf002t15o2j2yh14lm/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA",     additionalOptions: {
-          "access_token": "pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA"
-        },
-        ),
-        if (polyLine.isNotEmpty)
-          PolylineLayerOptions(
-            polylineCulling: false,
-            polylines: [
-              // if (currPolyLineList.isNotEmpty)
-              Polyline(
-                strokeWidth: 3,
-                // strokeWidth: pathStroke ?? 12,
-                points: polyLine,
-                color: Colors.lightBlueAccent,
+    return Scaffold(
+      body: Stack(
+        children: [
+          FlutterMap(
+            mapController: mapController,
+            options: MapOptions(
+              // rotation: -1 * mapRotation,
+              center: currPos,
+              minZoom: 1,
+              zoom: 12,
+              // zoom: mapZoom ?? 18,
+              maxZoom: 30.0,
+              keepAlive: true,
+            ),
+            layers: [
+              // TileLayerOptions(
+              //   maxZoom: 22,
+              //   maxNativeZoom: 18,
+              //   subdomains: ["a", "b", "c"],
+              //   urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              //   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+              // ),
+              TileLayerOptions(
+                urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7hxzrrf002t15o2j2yh14lm/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA",     additionalOptions: {
+                "access_token": "pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA"
+              },
+              ),
+              if (polyLine.isNotEmpty)
+                PolylineLayerOptions(
+                  polylineCulling: false,
+                  polylines: [
+                    // if (currPolyLineList.isNotEmpty)
+                    Polyline(
+                      strokeWidth: 3,
+                      // strokeWidth: pathStroke ?? 12,
+                      points: polyLine,
+                      color: Colors.purple,
+                    ),
+                    // if (currPolyLineList.isNotEmpty)
+                    //   Polyline(
+                    //     strokeWidth: 12,
+                    //     points: currPolyLineList,
+                    //     color: Colors.blue,
+                    //   ),
+                  ],
+                ),
+              MarkerLayerOptions(
+                rotate: true,
+                markers: [
+                  Marker(
+                      point: currPos,
+                      width: 70,
+                      height: 70,
+                      builder: (context) =>
+                      const Icon(
+                        // Icons.center_focus_strong,
+                        Icons.circle,
+                        size: 40,
+                        color: Colors.green,
+
+                      )
+                    // Image.asset('car.png'),
+                    //   Image.asset(
+                    //     "assets/car3.png",
+                    //   ),
+                      // Image(
+                      //     image: AssetImage('assets/car.png'),
+                      //     ),
+
+                  ),
+                ],
               ),
               // if (currPolyLineList.isNotEmpty)
-              //   Polyline(
-              //     strokeWidth: 12,
-              //     points: currPolyLineList,
-              //     color: Colors.blue,
+              //   MarkerLayerOptions(
+              //     rotate: true,
+              //     markers: [
+              //       Marker(
+              //         point: mapCenter,
+              //         width: 70,
+              //         height: 70,
+              //         builder: (context) => Image.asset(
+              //           // "images/arrow.png",
+              //           "images/car.png",
+              //           // color: Colors.blue,
+              //         ),
+              //       ),
+              //     ],
               //   ),
             ],
           ),
-        MarkerLayerOptions(
-          rotate: true,
-          markers: [
-            Marker(
-                point: currPos,
-                width: 70,
-                height: 70,
-                builder: (context) =>
-                // const Icon(
-                //   // Icons.center_focus_strong,
-                //   Icons.my_location,
-                //   size: 50,
-                //   color: Colors.red,
-                // )
-              // Image.asset('car.png'),
-                Image.asset(
-                  "assets/car2.png",
-                ),
-                // Image(
-                //     image: AssetImage('assets/car.png'),
-                //     ),
+          Container(
+            alignment: Alignment.bottomCenter,
 
+            child: Card(
+
+              color: Colors.black54,
+              elevation: 5,
+              child: ListTile(
+                leading: Icon(Icons.drive_eta_rounded,color: Colors.greenAccent,),
+                title: Text(routeinfo.instruction,style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),),
+                subtitle: Text('Remaining Distance : ${(routeinfo.Distance/1000).toInt().toString()} KM',style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+        ),),
+                trailing: Text('Remaining Time : ${ConvertToTime(routeinfo.Duration)}',style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+        ),),
+
+              ),
+              // Flex(
+              //   direction: Axis.vertical,
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: [
+              //     Flex(
+              //       direction: Axis.horizontal,
+              //       children: [
+              //         Icon(Icons.drive_eta_rounded),
+              //         Text(routeinfo.instruction,style: TextStyle(
+              //           color: Colors.white,
+              //           fontWeight: FontWeight.bold,
+              //         ),),
+              //       ],
+              //     ),
+              //     Text('Remaining Time : ${ConvertToTime(routeinfo.Duration)}',style: TextStyle(
+              //       color: Colors.white,
+              //       fontWeight: FontWeight.bold,
+              //     ),),
+              //     Text('Remaining Distance : ${(routeinfo.Distance/1000).toInt().toString()} KM',style: TextStyle(
+              //       color: Colors.white,
+              //       fontWeight: FontWeight.bold,
+              //     ),),
+              //   ],
+              //
+              // ),
             ),
-          ],
-        ),
-        // if (currPolyLineList.isNotEmpty)
-        //   MarkerLayerOptions(
-        //     rotate: true,
-        //     markers: [
-        //       Marker(
-        //         point: mapCenter,
-        //         width: 70,
-        //         height: 70,
-        //         builder: (context) => Image.asset(
-        //           // "images/arrow.png",
-        //           "images/car.png",
-        //           // color: Colors.blue,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-      ],
+          ),
+          Container(
+              alignment: Alignment.topLeft,
+              child :IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              )
+          ),
+        ],
+      ),
     );
 
   }

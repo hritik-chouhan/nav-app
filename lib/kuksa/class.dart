@@ -33,3 +33,18 @@ class VehicleSignal {
     );
   }
 }
+
+class info{
+  info({required this.Duration, required this.Distance, required this.instruction});
+
+  final num Duration;
+  final num Distance;
+  final String instruction;
+
+  info copywith({num? Duration , num? Distance, String? instruction}){
+    return info(Duration: Duration ?? this.Duration,
+        Distance: Distance ?? this.Distance,
+        instruction: instruction ?? this.instruction);
+
+  }
+}

@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+
+import 'kuksa/class.dart';
 // import 'package:latlong2/latlong.dart';
 
 final currlnglatProvider = StateNotifierProvider<currentLngLat,LatLng>(
@@ -65,4 +67,27 @@ class PolyLine extends StateNotifier<List<LatLng>> {
   void update(List<LatLng> list) {
     state = list;
   }
+}
+
+final Infoprovider = StateNotifierProvider<Info,info>((ref) => Info());
+
+class Info extends StateNotifier<info> {
+
+  Info() : super(initial);
+  static final info initial = info(Duration: 0, Distance: 0, instruction: '');
+
+  void update({
+  num? Duration,
+    num? Distance,
+    String? instruction,
+
+      }){
+    state = state.copywith(
+      Duration: Duration,
+      Distance: Distance,
+      instruction: instruction,
+    );
+
+
+      }
 }

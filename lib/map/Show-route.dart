@@ -47,6 +47,12 @@ class NavigationHome extends ConsumerWidget {
     LatLng destiPos = LatLng(vehicleSignal.destinationLatitude, vehicleSignal.destinationLongitude);
 
     return Scaffold(
+
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   iconTheme: IconThemeData(color: Colors.black),
+      // ),
       body: Stack(
         children: [
           FlutterMap(
@@ -55,7 +61,7 @@ class NavigationHome extends ConsumerWidget {
               // rotation: -1 * mapRotation,
               center: polyLine[(length/2).toInt()],
               minZoom: 1,
-              zoom: 10,
+              zoom: 8,
               // zoom: mapZoom ?? 18,
               maxZoom: 22.0,
               keepAlive: true,
@@ -69,7 +75,7 @@ class NavigationHome extends ConsumerWidget {
               //   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
               // ),
               TileLayerOptions(
-                urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7hxzrrf002t15o2j2yh14lm/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA",     additionalOptions: {
+                urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7j225qm001w14o4xeiqtv36/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA",     additionalOptions: {
                   "access_token": "pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA"
                 },
               ),
@@ -79,10 +85,10 @@ class NavigationHome extends ConsumerWidget {
                   polylines: [
                     // if (currPolyLineList.isNotEmpty)
                       Polyline(
+                        color : Colors.blue,
                         strokeWidth: 6,
                         // strokeWidth: pathStroke ?? 12,
                         points: polyLine,
-                        color: Colors.blue,
                       ),
                     // if (currPolyLineList.isNotEmpty)
                     //   Polyline(
@@ -102,9 +108,9 @@ class NavigationHome extends ConsumerWidget {
                       builder: (context) =>
                       const Icon(
                         // Icons.center_focus_strong,
-                        Icons.my_location,
+                        Icons.location_pin,
                         size: 50,
-                        color: Colors.orange,
+                        color: Colors.red,
                       )
 
                   ),
@@ -146,11 +152,21 @@ class NavigationHome extends ConsumerWidget {
               //   ),
             ],
           ),
+          Container(
+            alignment: Alignment.topLeft,
+              child :IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              )
+          ),
           bottomDetailCard(context,ref,Distance.toString(),Duration.toString(),CurrAddress),
         ],
       ),
 
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.black,
         onPressed: () async{
 
           // print(polyline);

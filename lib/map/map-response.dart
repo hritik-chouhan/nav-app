@@ -31,19 +31,30 @@ Future<Map> getDirectionsAPIResponse(LatLng currentLatLng,LatLng destiLatLng) as
   print(currentLatLng);
   print(destiLatLng);
   final response = await getdrivingRouteUsingMapbox(currentLatLng, destiLatLng);
+
+  if(response != null){
+    Map geometry = response['routes'][0]['geometry'];
+    num duration = response['routes'][0]['duration'];
+    num distance = response['routes'][0]['distance'];
+    Map legs = response['routes'][0]['legs'][0];
+    // print(distance);
+    // print(duration);
+    // print(geometry);
+    Map modifiedResponse = {
+      "geometry": geometry,
+      "duration": duration,
+      "distance": distance,
+      "legs" : legs,
+    };
+    return modifiedResponse;
+
+  }
+  else{
+    Map map = {};
+    return map;
+  }
   // print(response);
-  Map geometry = response['routes'][0]['geometry'];
-  num duration = response['routes'][0]['duration'];
-  num distance = response['routes'][0]['distance'];
-  // print(distance);
-  // print(duration);
-  // print(geometry);
-  Map modifiedResponse = {
-    "geometry": geometry,
-    "duration": duration,
-    "distance": distance,
-  };
-  return modifiedResponse;
+
 }
 
 Future<Map> getAdress(LatLng pos) async{

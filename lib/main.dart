@@ -139,9 +139,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     builder: (context) =>
                     const Icon(
                           // Icons.center_focus_strong,
-                          Icons.my_location,
-                          size: 50,
-                          color: Colors.deepPurple,
+                          Icons.location_pin,
+                          size: 40,
+                          color: Colors.red,
                         )
 
                   ),
@@ -185,6 +185,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             ],
           ),
           Container(
+            padding: EdgeInsets.all(8),
 
             alignment: Alignment.topLeft,
             child: TextFormField(
@@ -194,7 +195,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(),
-                icon: Icon(Icons.pin_drop),
+                icon: Icon(Icons.location_pin,color: Colors.black,),
                 hintText: "Choose your destination",
 
 
@@ -214,38 +215,51 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async{
+
+
           LatLng current = LatLng(vehicleSignal.currentLatitude, vehicleSignal.currentLongitude);
           LatLng destination = LatLng(vehicleSignal.destinationLatitude,vehicleSignal.destinationLongitude);
-          print(current);
-          print(destination);
-          Map RouteResponse = await getDirectionsAPIResponse(current,destination);
-          print(RouteResponse['geometry']['coordinates'].runtimeType);
 
-          List RouteCoordinates = RouteResponse['geometry']['coordinates'];
-          List<LatLng> polyline =[];
-          for(int i =0; i<RouteCoordinates.length ;i++){
-            polyline.add(LatLng(RouteCoordinates[i][1],RouteCoordinates[i][0]));
+          if(destination != LatLng(0,0)){
+
+            print(current);
+            print(destination);
+            Map RouteResponse = await getDirectionsAPIResponse(current,destination);
+
+            if(RouteResponse.isNotEmpty){
+              List RouteCoordinates = RouteResponse['geometry']['coordinates'];
+              List<LatLng> polyline =[];
+              for(int i =0; i<RouteCoordinates.length ;i++){
+                polyline.add(LatLng(RouteCoordinates[i][1],RouteCoordinates[i][0]));
+
+              }
+              ref.read(polylineprovider.notifier).update(polyline);
+              Map response = await getAdress(current);
+              String curradress = response['features'][0]['place_name'];
+              num duration = RouteResponse['duration'];
+              String time = ConvertToTime(duration);
+              // print(time);
+
+              double distanc = ((RouteResponse['distance']));
+              int distance = (distanc/1000).toInt();
+              // print(polyline);
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          NavigationHome( polyLine: polyline, CurrAddress: curradress,Duration: time,Distance: distance,)));
+
+            }
+            // print(RouteResponse['geometry']['coordinates'].runtimeType);
+
 
           }
-          ref.read(polylineprovider.notifier).update(polyline);
-          Map response = await getAdress(current);
-          String curradress = response['features'][0]['place_name'];
-          num duration = RouteResponse['duration'];
-          String time = ConvertToTime(duration);
-          print(time);
 
-          double distanc = ((RouteResponse['distance']));
-          int distance = (distanc/1000).toInt();
-          // print(polyline);
-
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) =>
-                      NavigationHome( polyLine: polyline, CurrAddress: curradress,Duration: time,Distance: distance,)));
           // _addSourceAndLineLayer(RouteResponse['geometry'], true);
         },
         label: const Text('Show Route'),
+        backgroundColor: Colors.purple,
         icon: const Icon(Icons.drive_eta_rounded),
       ),
       // floatingActionButton: FloatingActionButton(
