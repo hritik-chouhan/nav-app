@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:latlong2/latlong.dart';
 // import 'package:latlong2/latlong.dart';
 
 final currlnglatProvider = StateNotifierProvider<currentLngLat,LatLng>(
@@ -8,7 +8,7 @@ final currlnglatProvider = StateNotifierProvider<currentLngLat,LatLng>(
 
 class currentLngLat extends StateNotifier<LatLng>{
   currentLngLat() : super(
-    LatLng(48.143724,11.576278),
+    LatLng(31.706964,76.933138),
   );
   Future<void> update(value) async{
 
@@ -54,5 +54,15 @@ class destiAdress extends StateNotifier<String>{
   );
   Future<void> update(value)async{
     state = value;
+  }
+}
+
+final polylineprovider = StateNotifierProvider<PolyLine,List<LatLng>>((ref) => PolyLine());
+
+class PolyLine extends StateNotifier<List<LatLng>> {
+
+  PolyLine() : super([]);
+  void update(List<LatLng> list) {
+    state = list;
   }
 }
