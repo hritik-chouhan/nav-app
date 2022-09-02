@@ -59,7 +59,7 @@ class NavigationHome extends ConsumerWidget {
             mapController: mapController,
             options: MapOptions(
               // rotation: -1 * mapRotation,
-              center: polyLine[(length/2).toInt()],
+              center: currPos,
               minZoom: 1,
               zoom: 8,
               // zoom: mapZoom ?? 18,
@@ -134,28 +134,13 @@ class NavigationHome extends ConsumerWidget {
                   ),
                 ],
               ),
-              // if (currPolyLineList.isNotEmpty)
-              //   MarkerLayerOptions(
-              //     rotate: true,
-              //     markers: [
-              //       Marker(
-              //         point: mapCenter,
-              //         width: 70,
-              //         height: 70,
-              //         builder: (context) => Image.asset(
-              //           // "images/arrow.png",
-              //           "images/car.png",
-              //           // color: Colors.blue,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
+
             ],
           ),
           Container(
             alignment: Alignment.topLeft,
               child :IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back, color: Colors.white,),
                 onPressed: (){
                   Navigator.pop(context);
                 },

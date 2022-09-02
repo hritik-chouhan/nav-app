@@ -127,6 +127,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                 urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl4jl8h7y002914lrd5ojcgzl/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA",
                 additionalOptions: {
                   "access_token": "pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA"
+                // "access-token" : (R.string.mapbox_access_token).toString(),
                 },
               ),
               MarkerLayerOptions(
@@ -229,8 +230,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             if(RouteResponse.isNotEmpty){
               List RouteCoordinates = RouteResponse['geometry']['coordinates'];
               List<LatLng> polyline =[];
+
               for(int i =0; i<RouteCoordinates.length ;i++){
-                polyline.add(LatLng(RouteCoordinates[i][1],RouteCoordinates[i][0]));
+                polyline.add(LatLng((RouteCoordinates[i][1]).toDouble(),(RouteCoordinates[i][0]).toDouble()));
 
               }
               ref.read(polylineprovider.notifier).update(polyline);
@@ -240,7 +242,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               String time = ConvertToTime(duration);
               // print(time);
 
-              double distanc = ((RouteResponse['distance']));
+              double distanc = ((RouteResponse['distance']).toDouble());
               int distance = (distanc/1000).toInt();
               // print(polyline);
 

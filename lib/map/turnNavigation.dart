@@ -80,7 +80,7 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
               Distance: RouteResponse['distance'], instruction: steps['maneuver']['instruction']);
           List<LatLng> currpolyline =[];
           for(int i =0; i<RouteCoordinates.length ;i++){
-            currpolyline.add(LatLng(RouteCoordinates[i][1],RouteCoordinates[i][0]));
+            currpolyline.add(LatLng((RouteCoordinates[i][1]).toDouble(),(RouteCoordinates[i][0]).toDouble()));
 
           }
           ref.read(polylineprovider.notifier).update(currpolyline);
