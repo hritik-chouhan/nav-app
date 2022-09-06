@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'kuksa/class.dart';
-// import 'package:latlong2/latlong.dart';
+
 
 final currlnglatProvider = StateNotifierProvider<currentLngLat,LatLng>(
       (ref)=> currentLngLat(),

@@ -6,40 +6,30 @@ import 'package:flutter_navigation/kuksa/class-provider.dart';
 import 'package:flutter_navigation/kuksa/class.dart';
 import 'package:flutter_navigation/map/bottom-card.dart';
 import 'package:flutter_navigation/map/turnNavigation.dart';
+import 'map-config.dart';
 
 class NavigationHome extends ConsumerWidget {
   final List<LatLng> polyLine;
   String CurrAddress;
   String Duration;
   num Distance;
-  // final List<LatLng> currPolyLineList;
-  // double mapRotation;
-  // LatLng mapCenter;
-  // double? mapZoom;
-  // double? pathStroke;
+
   NavigationHome({
     Key? key,
     required this.polyLine,
     required this.CurrAddress,
     required this.Duration,
     required this.Distance,
-    // required this.currPolyLineList,
-    // required this.mapRotation,
-    // required this.mapCenter,
-    // this.mapZoom,
-    // this.pathStroke,
+
   }) : super(key: key);
 
-  // LatLng src = LatLng(31.71, 76.95);
 
-  // LatLng des = LatLng(31.781456, 76.997469);
 
   double tempangle = 0;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final currListProvider = ref.watch(polyLineStateProvider);
-    // List<LatLng> currPolyLineList = currListProvider.currPolyLineList;
-    //
+
+
     MapController mapController = MapController();
     int length = polyLine.length;
     VehicleSignal vehicleSignal = ref.watch(vehicleSignalProvider);
@@ -48,54 +38,40 @@ class NavigationHome extends ConsumerWidget {
 
     return Scaffold(
 
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   iconTheme: IconThemeData(color: Colors.black),
-      // ),
+
       body: Stack(
         children: [
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-              // rotation: -1 * mapRotation,
+
               center: currPos,
               minZoom: 1,
               zoom: 8,
-              // zoom: mapZoom ?? 18,
+
               maxZoom: 22.0,
               keepAlive: true,
             ),
             layers: [
-              // TileLayerOptions(
-              //   maxZoom: 22,
-              //   maxNativeZoom: 18,
-              //   subdomains: ["a", "b", "c"],
-              //   urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              //   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-              // ),
+
               TileLayerOptions(
-                urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7j225qm001w14o4xeiqtv36/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA",     additionalOptions: {
-                  "access_token": "pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA"
+                urlTemplate: map.MapTileDarkMode,
+                additionalOptions: {
+                  "access_token": map.MapBoxToken
                 },
               ),
               if (polyLine.isNotEmpty)
                 PolylineLayerOptions(
                   polylineCulling: false,
                   polylines: [
-                    // if (currPolyLineList.isNotEmpty)
+
                       Polyline(
                         color : Colors.blue,
                         strokeWidth: 6,
-                        // strokeWidth: pathStroke ?? 12,
+
                         points: polyLine,
                       ),
-                    // if (currPolyLineList.isNotEmpty)
-                    //   Polyline(
-                    //     strokeWidth: 12,
-                    //     points: currPolyLineList,
-                    //     color: Colors.blue,
-                    //   ),
+
                   ],
                 ),
               MarkerLayerOptions(
@@ -107,7 +83,7 @@ class NavigationHome extends ConsumerWidget {
                       height: 70,
                       builder: (context) =>
                       const Icon(
-                        // Icons.center_focus_strong,
+
                         Icons.location_pin,
                         size: 50,
                         color: Colors.red,
@@ -125,7 +101,7 @@ class NavigationHome extends ConsumerWidget {
                       height: 70,
                       builder: (context) =>
                       const Icon(
-                        // Icons.center_focus_strong,
+
                         Icons.location_pin,
                         size: 50,
                         color: Colors.green,
@@ -154,14 +130,14 @@ class NavigationHome extends ConsumerWidget {
         backgroundColor: Colors.black,
         onPressed: () async{
 
-          // print(polyline);
+
 
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (_) =>
                       TurnNavigation()));
-          // _addSourceAndLineLayer(RouteResponse['geometry'], true);
+
         },
         label: const Text('lets go'),
         icon: const Icon(Icons.drive_eta_rounded),

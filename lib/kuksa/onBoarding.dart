@@ -21,12 +21,11 @@ class OnBoardingPage extends ConsumerStatefulWidget {
 
 class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   late Timer _timer;
-  // static const int open = 1;
-  // static const int closed = 3;
+
 
   @override
   void initState() {
-    print('onboarding');
+
     super.initState();
     VISS.init(widget.socket);
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) {

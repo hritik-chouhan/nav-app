@@ -12,6 +12,7 @@ import 'package:flutter_navigation/kuksa/class.dart';
 import 'package:flutter_navigation/provider.dart';
 
 import 'map-response.dart';
+import 'map-config.dart';
 
 class TurnNavigation extends ConsumerStatefulWidget {
   TurnNavigation({Key? key,}) : super(key: key);
@@ -61,21 +62,16 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
         LatLng current = LatLng(vehicleSignal.currentLatitude, vehicleSignal.currentLongitude);
         mapController.move(current, 18);
         LatLng destination = LatLng(vehicleSignal.destinationLatitude,vehicleSignal.destinationLongitude);
-        // print(' current $current');
-        // print(' destination $destination');
+
         Map RouteResponse = await getDirectionsAPIResponse(current,destination);
-        // print(RouteResponse['geometry']['coordinates'].runtimeType);
+
 
         if(RouteResponse.isNotEmpty){
 
           List RouteCoordinates = RouteResponse['geometry']['coordinates'];
-          // print('check');
-          // print(RouteResponse['steps']['maneuver']['instruction']);
-          Map steps = RouteResponse['legs']['steps'][0];
-          // print(steps['maneuver']['instruction']);
 
-          // print(steps);
-          // print(steps['maneuver']);
+          Map steps = RouteResponse['legs']['steps'][0];
+
           ref.read(Infoprovider.notifier).update(Duration: RouteResponse['duration'],
               Distance: RouteResponse['distance'], instruction: steps['maneuver']['instruction']);
           List<LatLng> currpolyline =[];
@@ -93,7 +89,7 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
 
             rotationDegree = (rotationDegree.isNaN) ? 0 : rotationDegree;
           }
-          // print("Rotation:$rotationDegree");
+
           mapController.rotate(-1 * rotationDegree);
 
 
@@ -106,10 +102,10 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
   }
 
   void dispose(){
-    //...
+
     super.dispose();
     timer.cancel();
-    //...
+
   }
 
   double tempangle = 0;
@@ -117,7 +113,7 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
     List<double> newA = convertCoord(a);
     List<double> newB = convertCoord(b);
     double slope = (newB[1] - newA[1]) / (newB[0] - newA[0]);
-    // -1 * deg + 180
+
     return ((atan(slope) * 180) / pi);
   }
 
@@ -134,8 +130,7 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
 
 
 
-    int length = polyLine.length;
-    // LatLng pos = ref.watch(currlnglatProvider);
+
     VehicleSignal vehicleSignal = ref.watch(vehicleSignalProvider);
     LatLng currPos = LatLng(vehicleSignal.currentLatitude, vehicleSignal.currentLongitude);
     polyLine = ref.watch(polylineprovider);
@@ -147,44 +142,34 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-              // rotation: -1 * mapRotation,
+
               center: currPos,
               minZoom: 1,
               zoom: 12,
-              // zoom: mapZoom ?? 18,
+
               maxZoom: 30.0,
               keepAlive: true,
             ),
             layers: [
-              // TileLayerOptions(
-              //   maxZoom: 22,
-              //   maxNativeZoom: 18,
-              //   subdomains: ["a", "b", "c"],
-              //   urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              //   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-              // ),
+
               TileLayerOptions(
-                urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7hxzrrf002t15o2j2yh14lm/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA",     additionalOptions: {
-                "access_token": "pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA"
+                urlTemplate: map.MapTile,
+                additionalOptions: {
+                "access_token": map.MapBoxToken
               },
               ),
               if (polyLine.isNotEmpty)
                 PolylineLayerOptions(
                   polylineCulling: false,
                   polylines: [
-                    // if (currPolyLineList.isNotEmpty)
+
                     Polyline(
                       strokeWidth: 3,
                       // strokeWidth: pathStroke ?? 12,
                       points: polyLine,
                       color: Colors.purple,
                     ),
-                    // if (currPolyLineList.isNotEmpty)
-                    //   Polyline(
-                    //     strokeWidth: 12,
-                    //     points: currPolyLineList,
-                    //     color: Colors.blue,
-                    //   ),
+
                   ],
                 ),
               MarkerLayerOptions(
@@ -202,33 +187,12 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
                         color: Colors.green,
 
                       )
-                    // Image.asset('car.png'),
-                    //   Image.asset(
-                    //     "assets/car3.png",
-                    //   ),
-                      // Image(
-                      //     image: AssetImage('assets/car.png'),
-                      //     ),
+
 
                   ),
                 ],
               ),
-              // if (currPolyLineList.isNotEmpty)
-              //   MarkerLayerOptions(
-              //     rotate: true,
-              //     markers: [
-              //       Marker(
-              //         point: mapCenter,
-              //         width: 70,
-              //         height: 70,
-              //         builder: (context) => Image.asset(
-              //           // "images/arrow.png",
-              //           "images/car.png",
-              //           // color: Colors.blue,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
+
             ],
           ),
           Container(
@@ -254,31 +218,7 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
         ),),
 
               ),
-              // Flex(
-              //   direction: Axis.vertical,
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Flex(
-              //       direction: Axis.horizontal,
-              //       children: [
-              //         Icon(Icons.drive_eta_rounded),
-              //         Text(routeinfo.instruction,style: TextStyle(
-              //           color: Colors.white,
-              //           fontWeight: FontWeight.bold,
-              //         ),),
-              //       ],
-              //     ),
-              //     Text('Remaining Time : ${ConvertToTime(routeinfo.Duration)}',style: TextStyle(
-              //       color: Colors.white,
-              //       fontWeight: FontWeight.bold,
-              //     ),),
-              //     Text('Remaining Distance : ${(routeinfo.Distance/1000).toInt().toString()} KM',style: TextStyle(
-              //       color: Colors.white,
-              //       fontWeight: FontWeight.bold,
-              //     ),),
-              //   ],
-              //
-              // ),
+
             ),
           ),
           Container(
@@ -298,38 +238,3 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
 }
 
 
-// class TurnNavigation extends ConsumerWidget {
-//   final List<LatLng> polyLine;
-//   // final List<LatLng> currPolyLineList;
-//   // double mapRotation;
-//   // LatLng mapCenter;
-//   // double? mapZoom;
-//   // double? pathStroke;
-//   TurnNavigation({
-//     Key? key,
-//     required this.polyLine,
-//     // required this.currPolyLineList,
-//     // required this.mapRotation,
-//     // required this.mapCenter,
-//     // this.mapZoom,
-//     // this.pathStroke,
-//   }) : super(key: key);
-//
-//   // LatLng src = LatLng(31.71, 76.95);
-//
-//   // LatLng des = LatLng(31.781456, 76.997469);
-//
-//
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // final currListProvider = ref.watch(polyLineStateProvider);
-//     // List<LatLng> currPolyLineList = currListProvider.currPolyLineList;
-//     //
-//
-//
-//     return Scaffold(
-//       body:
-//
-//     );
-//   }
-// }

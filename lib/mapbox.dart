@@ -59,15 +59,15 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
   TextEditingController _textEditingController = TextEditingController();
   late AnimationController _animationController;
 
-  // SearchContainer height.
+
   late Animation _containerHeight;
 
-  // Place options opacity.
+
   late Animation _listOpacity;
 
   List<MapBoxPlace> _placePredictions = [];
 
-  // MapBoxPlace _selectedPlace;
+
 
   late Timer _debounceTimer;
 
@@ -104,7 +104,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
 
   @override
   void dispose() {
-    _debounceTimer?.cancel();
+    _debounceTimer.cancel();
     _animationController?.dispose();
     super.dispose();
   }
@@ -255,13 +255,13 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
 
       await _animationController.animateTo(0.5);
 
-      print('predictions--------------- $predictions');
+
 
       setState(() => _placePredictions = predictions!);
 
       await _animationController.forward();
     } else {
-      print('no result----------');
+
       await _animationController.animateTo(0.5);
       setState(() => _placePredictions = []);
       await _animationController.reverse();
@@ -280,7 +280,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
     await _animationController.animateTo(0.5);
     setState(() {
       _placePredictions = [];
-      // _selectedPlace = prediction;
+
     });
     _animationController.reverse();
 

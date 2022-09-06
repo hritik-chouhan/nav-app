@@ -3,8 +3,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_navigation/map/map-config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:mapbox_gl/mapbox_gl.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_navigation/kuksa/class-provider.dart';
@@ -34,10 +35,10 @@ class SearchPage extends ConsumerWidget {
         child: MapBoxPlaceSearchWidget(
           height: 600,
           popOnSelect: false,
-          apiKey: 'pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA',
+          apiKey: map.MapBoxToken,
           searchHint: 'Search around your place',
           onSelected: (place) async{
-            var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${place.placeName}.json?proximity=ip&types=place%2Cpostcode%2Caddress&access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA';
+            var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${place.placeName}.json?proximity=ip&types=place%2Cpostcode%2Caddress&access_token=${map.MapBoxToken}';
             http.Response response = await http.get(Uri.parse(url));
             Map data = json.decode(response.body);
             double longi = data['features'][0]['center'][0];
@@ -45,21 +46,17 @@ class SearchPage extends ConsumerWidget {
             if(iscurrent){
               LatLng value = LatLng(lati,longi);
               ref.read(vehicleSignalProvider.notifier).update(currentLatitude: lati,currentLongitude: longi);
-              // ref.read(currlnglatProvider.notifier).update(value);
               ref.read(CurrentAdressProvider.notifier).update(place.placeName);
 
             }
             else{
-              LatLng value = LatLng(lati,longi);
               ref.read(vehicleSignalProvider.notifier).update(destinationLatitude: lati,destinationLongitude: longi);
-              // ref.read(destinationlnglatProvider.notifier).update(value);
+
               ref.read(DestinationAdressProvider.notifier).update(place.placeName);
-              // LatLng distiloc = ref.read(destinationlnglatProvider);
-              // print(distiloc);
+
             }
 
-            // print(longi);
-            // print(lati);
+
 
           },
           context: context,

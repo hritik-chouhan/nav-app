@@ -1,16 +1,15 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-// import 'package:mapbox_gl/mapbox_gl.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'map-config.dart';
 
 
 
 String baseUrl = 'https://api.mapbox.com/directions/v5/mapbox';
-String accessToken = 'pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA'
-;
+String accessToken = map.MapBoxToken;
 String navType = 'driving';
 
 Dio _dio = Dio();
@@ -28,8 +27,7 @@ Future getdrivingRouteUsingMapbox(LatLng source, LatLng destination) async {
 }
 
 Future<Map> getDirectionsAPIResponse(LatLng currentLatLng,LatLng destiLatLng) async {
-  print(currentLatLng);
-  print(destiLatLng);
+
   final response = await getdrivingRouteUsingMapbox(currentLatLng, destiLatLng);
 
   if(response != null){
@@ -37,9 +35,7 @@ Future<Map> getDirectionsAPIResponse(LatLng currentLatLng,LatLng destiLatLng) as
     num duration = response['routes'][0]['duration'];
     num distance = response['routes'][0]['distance'];
     Map legs = response['routes'][0]['legs'][0];
-    // print(distance);
-    // print(duration);
-    // print(geometry);
+
     Map modifiedResponse = {
       "geometry": geometry,
       "duration": duration,
@@ -58,7 +54,7 @@ Future<Map> getDirectionsAPIResponse(LatLng currentLatLng,LatLng destiLatLng) as
 }
 
 Future<Map> getAdress(LatLng pos) async{
-  var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${pos.longitude},${pos.latitude}.json?&access_token=pk.eyJ1IjoiaHJpdGlrMzk2MSIsImEiOiJjbDRpZjJoZmEwbmt2M2JwOTR0ZmxqamVpIn0.j7hMYKw95zKarr69MMtfcA';
+  var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${pos.longitude},${pos.latitude}.json?&access_token=$accessToken';
   http.Response response = await http.get(Uri.parse(url));
   Map data = json.decode(response.body);
   return data;

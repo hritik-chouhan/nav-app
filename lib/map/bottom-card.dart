@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
+
 import 'package:flutter_navigation/kuksa/class-provider.dart';
 import 'package:flutter_navigation/kuksa/class.dart';
 import 'package:flutter_navigation/provider.dart';
@@ -16,7 +16,7 @@ Widget bottomDetailCard(
 
       width: MediaQuery.of(context).size.width,
       child: Card(
-        // color: Colors.white54,
+
         clipBehavior: Clip.antiAlias,
         child: Padding(
           padding: const EdgeInsets.all(15),
@@ -41,9 +41,7 @@ Widget bottomDetailCard(
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     subtitle: Text('$distance km     $dropOffTime',style: TextStyle(color: Colors.black),),
-                    // trailing: const Text('\$384.22',
-                    //     style: TextStyle(
-                    //         fontWeight: FontWeight.bold, fontSize: 18)),
+
                   ),
                 ),
 
