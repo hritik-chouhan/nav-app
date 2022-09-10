@@ -1,10 +1,11 @@
-
+// SPDX-License-Identifier: Apache-2.0
 
 import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_navigation/config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_navigation/kuksa/class-provider.dart';
@@ -12,7 +13,6 @@ import 'package:flutter_navigation/kuksa/class.dart';
 import 'package:flutter_navigation/provider.dart';
 
 import 'map-response.dart';
-import 'map-config.dart';
 
 class TurnNavigation extends ConsumerStatefulWidget {
   TurnNavigation({Key? key,}) : super(key: key);
@@ -30,17 +30,9 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
   String ConvertToTime(num duration){
     int hour = (duration/3600).toInt();
     int min = (duration%3600).toInt() ;
-    String mini = '';
-    if(min.toString().length > 2){
-      mini = min.toString().substring(0,2);
-
-    }
+    min = (min/60).toInt();
+    String mini = min.toString();
     String Hour = hour.toString();
-    if(mini.length == 0){
-      String time = "$Hour hr 0 min";
-      return time;
-
-    }
     String time = "$Hour hr $mini min";
 
     return time;
@@ -63,7 +55,7 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
         mapController.move(current, 18);
         LatLng destination = LatLng(vehicleSignal.destinationLatitude,vehicleSignal.destinationLongitude);
 
-        Map RouteResponse = await getDirectionsAPIResponse(current,destination);
+        Map RouteResponse = await getDirectionsAPIResponse(current,destination,ref);
 
 
         if(RouteResponse.isNotEmpty){
@@ -80,7 +72,6 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
 
           }
           ref.read(polylineprovider.notifier).update(currpolyline);
-          print('timerpolyline ${polyLine[0]},${polyLine[1]}');
           double rotationDegree = 0;
           int n = currpolyline.length;
           if (currpolyline.isNotEmpty && n > 1) {
@@ -135,6 +126,8 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
     LatLng currPos = LatLng(vehicleSignal.currentLatitude, vehicleSignal.currentLongitude);
     polyLine = ref.watch(polylineprovider);
     info routeinfo = ref.watch(Infoprovider);
+    final config = ref.read(ConfigStateprovider);
+
 
     return Scaffold(
       body: Stack(
@@ -153,9 +146,9 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
             layers: [
 
               TileLayerOptions(
-                urlTemplate: map.MapTile,
+                urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7hxzrrf002t15o2j2yh14lm/tiles/256/{z}/{x}/{y}@2x?access_token=${config.mapboxAccessToken}",
                 additionalOptions: {
-                "access_token": map.MapBoxToken
+                "access_token": config.mapboxAccessToken,
               },
               ),
               if (polyLine.isNotEmpty)
@@ -165,7 +158,6 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
 
                     Polyline(
                       strokeWidth: 3,
-                      // strokeWidth: pathStroke ?? 12,
                       points: polyLine,
                       color: Colors.purple,
                     ),
@@ -181,7 +173,6 @@ class _TurnNavigationState extends ConsumerState<TurnNavigation> {
                       height: 70,
                       builder: (context) =>
                       const Icon(
-                        // Icons.center_focus_strong,
                         Icons.circle,
                         size: 40,
                         color: Colors.green,

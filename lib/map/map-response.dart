@@ -1,22 +1,25 @@
+// SPDX-License-Identifier: Apache-2.0
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_navigation/config.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-import 'map-config.dart';
 
 
 
 String baseUrl = 'https://api.mapbox.com/directions/v5/mapbox';
-String accessToken = map.MapBoxToken;
 String navType = 'driving';
 
 Dio _dio = Dio();
 
-Future getdrivingRouteUsingMapbox(LatLng source, LatLng destination) async {
+Future getdrivingRouteUsingMapbox(LatLng source, LatLng destination,ref) async {
+  final config = ref.read(ConfigStateprovider);
+
   String url =
-      '$baseUrl/$navType/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?alternatives=true&continue_straight=true&geometries=geojson&language=en&overview=full&steps=true&access_token=$accessToken';
+      '$baseUrl/$navType/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?alternatives=true&continue_straight=true&geometries=geojson&language=en&overview=full&steps=true&access_token=${config.mapboxAccessToken}';
   try {
     _dio.options.contentType = Headers.jsonContentType;
     final responseData = await _dio.get(url);
@@ -26,9 +29,9 @@ Future getdrivingRouteUsingMapbox(LatLng source, LatLng destination) async {
   }
 }
 
-Future<Map> getDirectionsAPIResponse(LatLng currentLatLng,LatLng destiLatLng) async {
+Future<Map> getDirectionsAPIResponse(LatLng currentLatLng,LatLng destiLatLng,ref) async {
 
-  final response = await getdrivingRouteUsingMapbox(currentLatLng, destiLatLng);
+  final response = await getdrivingRouteUsingMapbox(currentLatLng, destiLatLng,ref);
 
   if(response != null){
     Map geometry = response['routes'][0]['geometry'];
@@ -49,12 +52,13 @@ Future<Map> getDirectionsAPIResponse(LatLng currentLatLng,LatLng destiLatLng) as
     Map map = {};
     return map;
   }
-  // print(response);
 
 }
 
-Future<Map> getAdress(LatLng pos) async{
-  var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${pos.longitude},${pos.latitude}.json?&access_token=$accessToken';
+Future<Map> getAdress(LatLng pos,ref) async{
+  final config = ref.read(ConfigStateprovider);
+
+  var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${pos.longitude},${pos.latitude}.json?&access_token=${config.mapboxAccessToken}';
   http.Response response = await http.get(Uri.parse(url));
   Map data = json.decode(response.body);
   return data;

@@ -1,11 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_navigation/homepage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_navigation/kuksa/vehicle-methods.dart';
 
-import '../main.dart';
 import 'config.dart';
 
 
@@ -27,7 +29,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   void initState() {
 
     super.initState();
-    VISS.init(widget.socket);
+    VISS.init(widget.socket,ref);
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       // print(widget.socket.readyState);
       if (widget.socket.readyState == 3) {

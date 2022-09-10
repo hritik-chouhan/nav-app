@@ -1,9 +1,9 @@
-
+// SPDX-License-Identifier: Apache-2.0
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_navigation/map/map-config.dart';
+import 'package:flutter_navigation/config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:http/http.dart' as http;
@@ -22,6 +22,8 @@ class SearchPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context,ref) {
+    final config = ref.read(ConfigStateprovider);
+
     return Scaffold(
       key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
@@ -35,10 +37,10 @@ class SearchPage extends ConsumerWidget {
         child: MapBoxPlaceSearchWidget(
           height: 600,
           popOnSelect: false,
-          apiKey: map.MapBoxToken,
+          apiKey: config.mapboxAccessToken,
           searchHint: 'Search around your place',
           onSelected: (place) async{
-            var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${place.placeName}.json?proximity=ip&types=place%2Cpostcode%2Caddress&access_token=${map.MapBoxToken}';
+            var url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/${place.placeName}.json?proximity=ip&types=place%2Cpostcode%2Caddress&access_token=${config.mapboxAccessToken}';
             http.Response response = await http.get(Uri.parse(url));
             Map data = json.decode(response.body);
             double longi = data['features'][0]['center'][0];

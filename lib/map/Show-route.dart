@@ -1,12 +1,15 @@
+// SPDX-License-Identifier: Apache-2.0
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_navigation/config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_navigation/kuksa/class-provider.dart';
 import 'package:flutter_navigation/kuksa/class.dart';
 import 'package:flutter_navigation/map/bottom-card.dart';
 import 'package:flutter_navigation/map/turnNavigation.dart';
-import 'map-config.dart';
 
 class NavigationHome extends ConsumerWidget {
   final List<LatLng> polyLine;
@@ -29,9 +32,11 @@ class NavigationHome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
+    final config = ref.read(ConfigStateprovider);
+
+
 
     MapController mapController = MapController();
-    int length = polyLine.length;
     VehicleSignal vehicleSignal = ref.watch(vehicleSignalProvider);
     LatLng currPos = LatLng(vehicleSignal.currentLatitude, vehicleSignal.currentLongitude);
     LatLng destiPos = LatLng(vehicleSignal.destinationLatitude, vehicleSignal.destinationLongitude);
@@ -55,9 +60,9 @@ class NavigationHome extends ConsumerWidget {
             layers: [
 
               TileLayerOptions(
-                urlTemplate: map.MapTileDarkMode,
+                urlTemplate: "https://api.mapbox.com/styles/v1/hritik3961/cl7j225qm001w14o4xeiqtv36/tiles/256/{z}/{x}/{y}@2x?access_token=${config.mapboxAccessToken}",
                 additionalOptions: {
-                  "access_token": map.MapBoxToken
+                  "access_token": config.mapboxAccessToken,
                 },
               ),
               if (polyLine.isNotEmpty)

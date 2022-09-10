@@ -1,57 +1,64 @@
+// SPDX-License-Identifier: Apache-2.0
+
 import 'dart:convert';
 import 'dart:io';
 
 
+import 'package:flutter_navigation/config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_navigation/kuksa/config.dart';
 import 'package:flutter_navigation/kuksa/paths.dart';
 
 import 'class-provider.dart';
 
 class VISS {
   static const requestId = "test-id";
-  static void init(WebSocket socket) {
-    authorize(socket);
-    subscribe(socket, VSPath.vehicleCurrentLatitude);
-    subscribe(socket, VSPath.vehicleCurrentLongitude);
-    subscribe(socket, VSPath.vehicleDestinationLatitude);
-    subscribe(socket, VSPath.vehicleDestinationLongitude);
+  static void init(WebSocket socket, WidgetRef ref) {
+    authorize(socket,ref);
+    subscribe(socket,ref, VSPath.vehicleCurrentLatitude);
+    subscribe(socket,ref, VSPath.vehicleCurrentLongitude);
+    subscribe(socket,ref, VSPath.vehicleDestinationLatitude);
+    subscribe(socket,ref, VSPath.vehicleDestinationLongitude);
 
   }
 
-  static void update(WebSocket socket) {
-    get(socket, VSPath.vehicleCurrentLatitude);
-    get(socket, VSPath.vehicleCurrentLongitude);
-    get(socket, VSPath.vehicleDestinationLatitude);
-    get(socket, VSPath.vehicleDestinationLongitude);
+  static void update(WebSocket socket,WidgetRef ref) {
+    get(socket,ref, VSPath.vehicleCurrentLatitude);
+    get(socket,ref, VSPath.vehicleCurrentLongitude);
+    get(socket, ref,VSPath.vehicleDestinationLatitude);
+    get(socket,ref, VSPath.vehicleDestinationLongitude);
 
 
 
   }
 
-  static void authorize(WebSocket socket) {
+  static void authorize(WebSocket socket,WidgetRef ref) {
+    final config = ref.read(ConfigStateprovider);
     Map<String, dynamic> map = {
       "action": "authorize",
-      "tokens": VehicleSignalConfig.authToken,
+      "tokens": config.kuksaAuthToken,
       "requestId": requestId
     };
     socket.add(jsonEncode(map));
   }
 
-  static void get(WebSocket socket, String path) {
+  static void get(WebSocket socket, WidgetRef ref,String path) {
+    final config = ref.read(ConfigStateprovider);
+
     Map<String, dynamic> map = {
       "action": "get",
-      "tokens": VehicleSignalConfig.authToken,
+      "tokens": config.kuksaAuthToken,
       "path": path,
       "requestId": requestId
     };
     socket.add(jsonEncode(map));
   }
 
-  static void set(WebSocket socket, String path, String value) {
+  static void set(WebSocket socket, WidgetRef ref,String path, String value) {
+    final config = ref.read(ConfigStateprovider);
+
     Map<String, dynamic> map = {
       "action": "set",
-      "tokens": VehicleSignalConfig.authToken,
+      "tokens": config.kuksaAuthToken,
       "path": path,
       "requestId": requestId,
       "value": value
@@ -59,10 +66,12 @@ class VISS {
     socket.add(jsonEncode(map));
   }
 
-  static void subscribe(WebSocket socket, String path) {
+  static void subscribe(WebSocket socket,WidgetRef ref, String path) {
+    final config = ref.read(ConfigStateprovider);
+
     Map<String, dynamic> map = {
       "action": "subscribe",
-      "tokens": VehicleSignalConfig.authToken,
+      "tokens": config.kuksaAuthToken,
       "path": path,
       "requestId": requestId
     };
