@@ -23,6 +23,11 @@ class _GetConfigState extends ConsumerState<GetConfig> {
       final configStateProvider = ref.read(ConfigStateprovider.notifier);
 
       String configFilePath = '/etc/xdg/AGL/nav_config.yaml';
+      String orsKeyFilePath = '/etc/default/mapboxkey';
+
+      String keyContent = "";
+
+      final orsKeyFile = File(orsKeyFilePath);
 
       final configFile = File(configFilePath);
       configFile.readAsString().then((content) {
@@ -30,9 +35,16 @@ class _GetConfigState extends ConsumerState<GetConfig> {
         configStateProvider.update(
           hostname: yamlMap['hostname'],
           port: yamlMap['port'],
-          mapboxAccessToken: yamlMap['mapboxAccessToken'],
           kuksaAuthToken: yamlMap['kuskaAuthToken'],
         );
+      });
+      orsKeyFile.readAsString().then((content) {
+        keyContent = content.split(':')[1].trim();
+        if (keyContent.isNotEmpty && keyContent != 'YOU_NEED_TO_SET_IT_IN_LOCAL_CONF') {
+          configStateProvider.update(mapboxAccessToken: keyContent);
+        } else {
+          print("WARNING: openrouteservice API Key not found !");
+        }
       });
     });
   }
