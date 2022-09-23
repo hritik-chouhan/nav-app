@@ -66,6 +66,8 @@ class _GetConfigState extends ConsumerState<GetConfig> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 Text(
                     "Something Wrong with config file! Check config.yaml file and restart"),
+                Text("OR"),
+                Text("You Need to set MapboxAccess token in local.conf file"),
               ],
             )),
       );
